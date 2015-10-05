@@ -1,0 +1,23 @@
+observium:
+    build: .
+    mem_limit: 256m
+    ports: 
+        - "8000:8000"
+    volumes:
+        - "/opt/observium/volumes/config:/config"
+        - "/opt/observium/volumes/html:/opt/observium/html"
+        - "/opt/observium/volumes/logs:/opt/observium/logs"
+        - "/opt/observium/volumes/rrd:/opt/observium/rrd"
+    links:
+        - observium_mysql
+    environment:
+        - OBSERVIUM_USER=user
+        - OBSERVIUM_PASSWORD=changethis
+observium_mysql:
+    image: library/mysql:latest
+    mem_limit: 256m
+    environment:
+        - MYSQL_ROOT_PASSWORD=changeThisValue!!1eleven(42)
+        - MYSQL_DATABASE=observium
+        - MYSQL_USER=observium
+        - MYSQL_PASSWORD=changeThisValue!!1eleven(42)
