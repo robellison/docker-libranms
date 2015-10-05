@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # == Fetch proper Observium version
 
 community_http() {
@@ -46,6 +45,12 @@ else
   cp /opt/observium/config.php.default /config/config.php
   chown nobody:users /config/config.php
   PW=$(date | sha256sum | cut -b -31)
+  if [ -n "${OBSERVIUM_MYSQL_1_ENV_MYSQL_PASSWORD+1}" ]; #if isset 
+     then echo "using docker-compose"; 
+          PW=$OBSERVIUM_MYSQL_1_ENV_MYSQL_PASSWORD;
+          sed -i -e "s/localhost/dockerobservium_observium_mysql_1/g" /config/config.php;
+     else echo "PW is set to '$PW'"; fi 
+
   sed -i -e 's/PASSWORD/'$PW'/g' /config/config.php
   sed -i -e 's/USERNAME/observium/g' /config/config.php
 fi
@@ -58,3 +63,13 @@ ln -s /config/config.php /opt/observium/config.php
 # readability.
 chown nobody:users -R /opt/observium
 chmod 755 -R /opt/observium
+
+#if we are in compose mode we create a first admin user
+if [ -n "${OBSERVIUM_USER+1}" ];
+    then 
+         #we need to init the database first
+         /opt/observium/discovery.php -h all;
+         #now we add a new user at level 10 admin
+         /opt/observium/adduser.php $OBSERVIUM_USER $OBSERVIUM_PASSWORD 10
+fi
+

@@ -39,6 +39,10 @@ VOLUME ["/config", \
 # === phusion/baseimage pre-work
 CMD ["/sbin/my_init"]
 
+
+# === create mysql socket dir for compoose setup 
+RUN mkdir -p /var/run/mysqld/
+
 # === General System
 
 # yelp/observium env mostly for reference

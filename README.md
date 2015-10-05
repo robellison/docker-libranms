@@ -51,6 +51,11 @@ Using Observium PE (or another SVN source):
         -e SVN_REPO=http://svn.observium.org/svn/observium/trunk \
         yelp/observium
 
+Using docker-compose:
+
+    $ #check and modify contents of docker-compose.yml
+     docker-compose up
+
 Volumes
 -------
 
