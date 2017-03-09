@@ -28,6 +28,7 @@
 #
 #
 FROM phusion/baseimage:0.9.16
+#FROM ubuntu:14.04
 MAINTAINER Codey Oxley <codey@yelp.com>
 EXPOSE 8000/tcp
 VOLUME ["/config", \
@@ -117,7 +118,8 @@ RUN mkdir -p \
 RUN php5enmod mcrypt && \
     a2enmod rewrite
 
-RUN mkdir /etc/service/apache2
+RUN mkdir -p /etc/service/apache2
+RUN mkdir -p /etc/container_environment/
 COPY bin/service/apache2.sh /etc/service/apache2/run
 RUN chmod +x /etc/service/apache2/run
 
@@ -146,6 +148,7 @@ RUN rm /etc/apache2/sites-available/default-ssl.conf && \
 
 # === Cron and finishing
 COPY cron.d /etc/cron.d/
+RUN chmod g-w /etc/cron.d/observium
 
 # === phusion/baseimage post-work
 # Clean up APT when done

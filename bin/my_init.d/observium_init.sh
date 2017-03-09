@@ -50,7 +50,10 @@ else
           PW=$OBSERVIUM_MYSQL_1_ENV_MYSQL_PASSWORD;
           sed -i -e "s/localhost/dockerobservium_observium_mysql_1/g" /config/config.php;
      else echo "PW is set to '$PW'"; fi 
-
+  
+  #create first user
+  echo "/opt/observium/adduser.php admin admin 10" | at -M now + 1 minute
+  
   sed -i -e 's/PASSWORD/'$PW'/g' /config/config.php
   sed -i -e 's/USERNAME/observium/g' /config/config.php
 fi
@@ -64,11 +67,16 @@ ln -s /config/config.php /opt/observium/config.php
 chown nobody:users -R /opt/observium
 chmod 755 -R /opt/observium
 
+#remove group write rights to enable cronjob 
+chmod g-w /etc/cron.d/observium
+
 #if we are in compose mode we create a first admin user
 if [ -n "${OBSERVIUM_USER+1}" ];
     then 
          #we need to init the database first
-         /opt/observium/discovery.php -h all;
+        /opt/observium/discovery.php -u 
+
+	/opt/observium/discovery.php -h all;
          #now we add a new user at level 10 admin
          /opt/observium/adduser.php $OBSERVIUM_USER $OBSERVIUM_PASSWORD 10
 fi
