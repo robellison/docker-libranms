@@ -53,8 +53,9 @@ Using Observium PE (or another SVN source):
 
 Using docker-compose:
 
-    $ #check and modify contents of docker-compose.yml
-     docker-compose up
+    $ #check and modify contents of docker-compose.yml.default
+      #afterwards rename it to docker-compose.yml and run
+     docker-compose up #for running as deamon add -d parameter
 
 Volumes
 -------
