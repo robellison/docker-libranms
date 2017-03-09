@@ -1,0 +1,27 @@
+observium:
+    build: .
+    ports:
+        - "8000:8000"
+    volumes:
+        - "/opt/observium/volumes/config:/config"
+        - "/opt/observium/volumes/html:/opt/observium/html"
+        - "/opt/observium/volumes/logs:/opt/observium/logs"
+        - "/opt/observium/volumes/rrd:/opt/observium/rrd"
+    links:
+        - observium_mysql
+    volumes_from:
+        - observium_mysql
+    environment:
+        - OBSERVIUM_USER=admin
+        - OBSERVIUM_PASSWORD=admin
+observium_mysql:
+    image: library/mysql:latest
+    volumes:
+        - /opt/observium/mysql:/var/lib/mysql/
+    ports:
+        - "3306:3306"
+    environment:
+        - MYSQL_ROOT_PASSWORD=ch4ngeThisValue!!1eleven(42)root
+        - MYSQL_DATABASE=observium
+        - MYSQL_USER=observium
+        - MYSQL_PASSWORD=ch4ngeThisValue!!1eleven(42)passw
