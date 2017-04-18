@@ -28,4 +28,6 @@ fi
 # first way thought of to avoid dealing with the svn conflict resolution from
 # script.
 cp -r /tmp/observium/* /opt/observium/ && rm -rf /tmp/observium
+chown nobody:users -R /opt/observium
+chmod 755 -R /opt/observium
 

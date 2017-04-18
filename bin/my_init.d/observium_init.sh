@@ -37,4 +37,4 @@ else
   echo "Database schema initialization has been done already ..."
 fi
 
-
+php5enmod mcrypt
