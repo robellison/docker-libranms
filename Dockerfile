@@ -153,3 +153,7 @@ RUN chmod g-w /etc/cron.d/observium
 # === phusion/baseimage post-work
 # Clean up APT when done
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+COPY download.sh /tmp/download.sh
+RUN chmod +x /tmp/download.sh
+RUN sh /tmp/download.sh
