@@ -14,7 +14,7 @@ if [ "$USE_WEATHERMAP" = true ]; then
     # If weathermap isn't in observium htmldir, install it
     if [ ! -d "$WEATHERMAP" ]; then
         cd $HTMLDIR
-        git clone https://github.com/exoscale/php-weathermap weathermap
+        #git clone https://github.com/exoscale/php-weathermap weathermap
         chown -hR nobody:users "$WEATHERMAP"
     fi
 
