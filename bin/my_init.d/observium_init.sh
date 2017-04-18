@@ -8,7 +8,7 @@ atd
 # Check for `config.php`. If it doesn't exist, use `config.php.default`,
 # substituting SQL credentials with observium/"random".
 
-
+mkdir /opt/observium/lock
 FIRST_TIME_LOCKED=/opt/observium/lock/observium-init.locked
 
 if [ ! -f $FIRST_TIME_LOCKED ]
