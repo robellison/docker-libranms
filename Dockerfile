@@ -52,6 +52,20 @@ ENV SVN_USER ''
 ENV SVN_PASS ''
 ENV SVN_REPO ''
 
+ARG OBSERVIUM_ADMIN_USER=admin
+ARG OBSERVIUM_ADMIN_PASS=passw0rd
+ARG OBSERVIUM_DB_HOST=observiumdb
+ARG OBSERVIUM_DB_USER=observium
+ARG OBSERVIUM_DB_PASS=passw0rd
+ARG OBSERVIUM_DB_NAME=observium
+
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US.UTF-8
+ENV OBSERVIUM_DB_HOST=$OBSERVIUM_DB_HOST
+ENV OBSERVIUM_DB_USER=$OBSERVIUM_DB_USER
+ENV OBSERVIUM_DB_PASS=$OBSERVIUM_DB_PASS
+ENV OBSERVIUM_DB_NAME=$OBSERVIUM_DB_NAME
+
 # Avoid any interactive prompting
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -157,3 +171,11 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 COPY download.sh /tmp/download.sh
 RUN chmod +x /tmp/download.sh
 RUN sh /tmp/download.sh
+
+# configure observium package
+RUN cd /opt/observium && \
+    cp config.php.default config.php && \
+    sed -i -e "s/= 'localhost';/= getenv('OBSERVIUM_DB_HOST');/g" config.php && \
+    sed -i -e "s/= 'USERNAME';/= getenv('OBSERVIUM_DB_USER');/g" config.php && \
+    sed -i -e "s/= 'PASSWORD';/= getenv('OBSERVIUM_DB_PASS');/g" config.php && \
+    sed -i -e "s/= 'observium';/= getenv('OBSERVIUM_DB_NAME');/g" config.php
