@@ -37,4 +37,7 @@ else
   echo "Database schema initialization has been done already ..."
 fi
 
-php5enmod mcrypt
+phpenmod mcrypt
+a2dismod mpm_event
+a2enmod mpm_prefork
+a2enmod php7.0
