@@ -125,6 +125,7 @@ RUN apt-get update -q && \
 RUN mkdir -p \
         /config \
         /opt/observium/html \
+        /opt/observium/lock \
         /opt/observium/logs \
         /opt/observium/rrd \
 
