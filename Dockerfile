@@ -97,17 +97,17 @@ RUN apt-get update -q && \
       graphviz \
       imagemagick \
       ipmitool \
-      libapache2-mod-php5 \
       libvirt-bin \
       mariadb-client \
       mtr-tiny \
       nmap \
-      php5-cli \
-      php5-gd \
-      php5-json \
-      php5-ldap \
-      php5-mcrypt \
-      php5-mysql \
+      libapache2-mod-php7.0 \
+      php7.0-cli \
+      php7.0-mysql \
+      php7.0-mysqli \
+      php7.0-gd \
+      php7.0-mcrypt \
+      php7.0-json \      
       php5-snmp \
       php-pear \
       pwgen \
@@ -119,7 +119,9 @@ RUN apt-get update -q && \
       subversion \
       unzip \
       wget \
-      whois
+      whois \
+      apache2
+
 
 RUN mkdir -p \
         /config \
