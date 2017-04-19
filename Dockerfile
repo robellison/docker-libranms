@@ -126,6 +126,7 @@ RUN mkdir -p \
         /config \
         /opt/observium/html \
         /opt/observium/lock \
+        /var/lib/rrdcached/journal \
         /opt/observium/logs \
         /opt/observium/rrd \
 
@@ -181,3 +182,6 @@ RUN cd /opt/observium && \
     sed -i -e "s/= 'USERNAME';/= getenv('OBSERVIUM_DB_USER');/g" config.php && \
     sed -i -e "s/= 'PASSWORD';/= getenv('OBSERVIUM_DB_PASS');/g" config.php && \
     sed -i -e "s/= 'observium';/= getenv('OBSERVIUM_DB_NAME');/g" config.php
+
+RUN C='$config['\''rrdcached'\''] = "unix:/var/run/rrdcached.sock";' \
+    echo $C >> /opt/observium/config.php

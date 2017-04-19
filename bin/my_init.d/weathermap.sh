@@ -20,6 +20,6 @@ if [ "$USE_WEATHERMAP" = true ]; then
 
     # Regardless, schedule map-poller.php
     echo "$C" > /etc/cron.d/weathermap
-    #restart cron
+    /etc/init.d/cron restart
 
 fi

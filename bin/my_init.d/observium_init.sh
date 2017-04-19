@@ -41,3 +41,7 @@ phpenmod mcrypt
 a2dismod mpm_event
 a2enmod mpm_prefork
 a2enmod php7.0
+chown nobody:users -R /opt/observium
+chmod 755 -R /opt/observium
+chown www-data:www-data /opt/observium/rrd
+touch /etc/crontab /etc/cron.d/*
