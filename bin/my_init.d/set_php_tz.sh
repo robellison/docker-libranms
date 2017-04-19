@@ -13,12 +13,12 @@ if [[ $CUSTOM_PHP_INI != 'true' ]] ; then
           /etc/php5/apache2/php.ini
     else
       echo "Timezone not specified by environment variable"
-      echo UTC > /etc/container_environment/TZ
-      sed -i \
-          "s#\;date\.timezone\ \=#date\.timezone\ \=\ UTC#g" \
-          /etc/php5/cli/php.ini
-      sed -i \
-          "s#\;date\.timezone\ \=#date\.timezone\ \=\ UTC#g" \
-          /etc/php5/apache2/php.ini
+    #  echo UTC > /etc/container_environment/TZ
+    #  sed -i \
+    #      "s#\;date\.timezone\ \=#date\.timezone\ \=\ UTC#g" \
+    #      /etc/php5/cli/php.ini
+    #  sed -i \
+    #      "s#\;date\.timezone\ \=#date\.timezone\ \=\ UTC#g" \
+    #      /etc/php5/apache2/php.ini
     fi
 fi
