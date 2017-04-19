@@ -108,7 +108,6 @@ RUN apt-get update -q && \
       php7.0-gd \
       php7.0-mcrypt \
       php7.0-json \      
-      php5-snmp \
       php-pear \
       pwgen \
       python-mysqldb \
