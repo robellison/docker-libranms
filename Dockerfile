@@ -27,9 +27,9 @@
 #                                 socket instead of using TCP.
 #
 #
-FROM phusion/baseimage:0.9.21
-#FROM ubuntu:14.04
-MAINTAINER Codey Oxley <codey@yelp.com>
+#FROM phusion/baseimage:0.9.21
+FROM ubuntu:16.04
+MAINTAINER rob.ellison@bt.com
 EXPOSE 8000/tcp
 VOLUME ["/config", \
         "/opt/observium/html", \
@@ -37,8 +37,6 @@ VOLUME ["/config", \
         "/opt/observium/rrd", \
         "/var/run/mysqld/mysqld.sock"]
 
-# === phusion/baseimage pre-work
-CMD ["/sbin/my_init"]
 
 # === General System
 
@@ -74,18 +72,6 @@ ENV LC_ALL C.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 
-# Install locales
-RUN locale-gen cs_CZ.UTF-8
-RUN locale-gen de_DE.UTF-8
-RUN locale-gen en_US.UTF-8
-RUN locale-gen es_ES.UTF-8
-RUN locale-gen fr_FR.UTF-8
-RUN locale-gen it_IT.UTF-8
-RUN locale-gen pl_PL.UTF-8
-RUN locale-gen pt_BR.UTF-8
-RUN locale-gen ru_RU.UTF-8
-RUN locale-gen sl_SI.UTF-8
-RUN locale-gen uk_UA.UTF-8
 
 # Install Observium prereqs
 RUN apt-get update -q && \
@@ -93,6 +79,8 @@ RUN apt-get update -q && \
       at \
       fping \
       git \
+      cron \
+      supervisor \
       graphviz \
       graphviz \
       imagemagick \
@@ -166,6 +154,7 @@ RUN rm /etc/apache2/sites-available/default-ssl.conf && \
 # === Cron and finishing
 COPY cron.d /etc/cron.d/
 RUN chmod g-w /etc/cron.d/observium
+RUN touch /var/log/cron.log
 
 # === phusion/baseimage post-work
 # Clean up APT when done
@@ -175,13 +164,9 @@ COPY download.sh /tmp/download.sh
 RUN chmod +x /tmp/download.sh
 RUN sh /tmp/download.sh
 
-# configure observium package
-RUN cd /opt/observium && \
-    cp config.php.default config.php && \
-    sed -i -e "s/= 'localhost';/= getenv('OBSERVIUM_DB_HOST');/g" config.php && \
-    sed -i -e "s/= 'USERNAME';/= getenv('OBSERVIUM_DB_USER');/g" config.php && \
-    sed -i -e "s/= 'PASSWORD';/= getenv('OBSERVIUM_DB_PASS');/g" config.php && \
-    sed -i -e "s/= 'observium';/= getenv('OBSERVIUM_DB_NAME');/g" config.php
+COPY prepconfig.sh /tmp/prepconfig.sh
+RUN chmod +x /tmp/prepconfig.sh
 
-RUN C='$config['\''rrdcached'\''] = "unix:/var/run/rrdcached.sock";' \
-    echo $C >> /opt/observium/config.php
+# configure container interfaces
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+CMD ["/usr/bin/supervisord"]
