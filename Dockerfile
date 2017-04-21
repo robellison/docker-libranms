@@ -109,6 +109,11 @@ RUN php5enmod mcrypt && \
 
 RUN mkdir -p /etc/container_environment/
 
+# Add librenms user
+
+RUN useradd librenms -d /opt/librenms -M -r
+RUN usermod -a -G librenms librenms
+
 
 # Boot-time init scripts for phusion/baseimage
 COPY bin/my_init.d /etc/my_init.d/

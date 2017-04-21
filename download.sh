@@ -1,8 +1,5 @@
 #!/bin/bash
-# Add librenms user
 
-useradd librenms -d /opt/librenms -M -r
-usermod -a -G librenms librenms
 
 # == Fetch proper librenms version
 
