@@ -59,7 +59,7 @@ a2enmod rewrite
 echo "Validating setup..."
 cd /opt/librenms
 /opt/librenms/validate.php
-chown www-data -R /opt/librenms/html
+chown librenms:librenms -R /opt/librenms/html
 touch /etc/crontab /etc/cron.d/*
 
 
