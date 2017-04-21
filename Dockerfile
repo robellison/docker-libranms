@@ -87,6 +87,7 @@ RUN apt-get update -q && \
       rrdcached \
       rrdtool \
       snmp \
+      sudo \
       software-properties-common \
       subversion \
       unzip \
@@ -94,7 +95,7 @@ RUN apt-get update -q && \
       whois \
       apache2
 
-RUN pip install --upgrade pip devcron
+RUN pip install --upgrade pip schedule
 
 RUN mkdir -p \
         /config \
@@ -157,8 +158,8 @@ RUN sh /tmp/download.sh
 COPY startapp.sh /opt/startapp.sh
 RUN chmod +x /opt/startapp.sh
 
-#COPY devcron.py /opt/devcron.py
-#RUN chmod +x /opt/devcron.py
+COPY scheduler.py /opt/scheduler.py
+RUN chmod +x /opt/scheduler.py
 
 COPY config.php.default /tmp/config.php.default
 RUN mkdir -p /opt/librenms/lock
