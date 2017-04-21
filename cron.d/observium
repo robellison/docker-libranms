@@ -1,5 +1,0 @@
-33  */6   * * *   root    /opt/observium/discovery.php -h all >> /var/log/cron.log 2>&1
-*/5 *     * * *   root    /opt/observium/discovery.php -h new >> /var/log/cron.log 2>&1
-*/5 *     * * *   root    /opt/observium/poller-wrapper.py $WORKERS >> /var/log/cron.log 2>&1
-0   0     * * *   root    /opt/observium/housekeeping.php $HOUSEKEEPING_ARGS >> /var/log/cron.log 2>&1
-#end

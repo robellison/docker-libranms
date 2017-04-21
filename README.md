@@ -1,12 +1,12 @@
-Observium
+librenms
 =========
 
-Dockerized version of Observium with support for external database, both
+Dockerized version of librenms with support for external database, both
 communitiy and professional editions (via arbritrary svn source), packages
 to allow native LDAP auth, and easy plugin support by exposing htmldir as a
 volume.
 
-At Yelp we use this to provide portability to our NMS. With a flexible
+At BT plc. we use this to provide portability to our NMS. With a flexible
 image, it's easy to manage 2+ instances with Puppet or 
 [insert way to configure/schedule containers here]. Good use cases would be 
 instances for corp and prod, managed services and internal, or just a single 
@@ -18,38 +18,38 @@ Using this image
 Examples assume the following directory layout:
 
     $ tree $PWD
-    /opt/observium/volumes
+    /opt/librenms/volumes
     ├── config
     │   └── config.php
     ├── html
     ├── logs
     └── rrd
 
-Linking volumes and using Observium CE:
+Linking volumes and using librenms CE:
 
     $ docker run -d \
-        --name observium \
+        --name librenms \
         -p 8000:8000 \
-        -v /opt/observium/volumes/config:/config \
-        -v /opt/observium/volumes/html:/opt/observium/html \
-        -v /opt/observium/volumes/logs:/opt/observium/logs \
-        -v /opt/observium/volumes/rrd:/opt/observium/rrd \
-        yelp/observium
+        -v /opt/librenms/volumes/config:/config \
+        -v /opt/librenms/volumes/html:/opt/librenms/html \
+        -v /opt/librenms/volumes/logs:/opt/librenms/logs \
+        -v /opt/librenms/volumes/rrd:/opt/librenms/rrd \
+        BT plc./librenms
 
-Using Observium PE (or another SVN source):
+Using librenms PE (or another SVN source):
 
     $ docker run -d \
-        --name observium \
+        --name librenms \
         -p 8000:8000 \
-        -v /opt/observium/volumes/config:/config \
-        -v /opt/observium/volumes/html:/opt/observium/html \
-        -v /opt/observium/volumes/logs:/opt/observium/logs \
-        -v /opt/observium/volumes/rrd:/opt/observium/rrd \
+        -v /opt/librenms/volumes/config:/config \
+        -v /opt/librenms/volumes/html:/opt/librenms/html \
+        -v /opt/librenms/volumes/logs:/opt/librenms/logs \
+        -v /opt/librenms/volumes/rrd:/opt/librenms/rrd \
         -e USE_SVN=true \
         -e SVN_USER=user@example.com \
         -e SVN_PASS=dfed555743854a475345ae01a7668acc \
-        -e SVN_REPO=http://svn.observium.org/svn/observium/trunk \
-        yelp/observium
+        -e SVN_REPO=http://svn.librenms.org/svn/librenms/trunk \
+        BT plc./librenms
 
 Using docker-compose:
 
@@ -65,9 +65,9 @@ The following volumes are set in the container:
 | Volume                        | Purpose                                                                                                                       |
 |:------------------------------|:------------------------------------------------------------------------------------------------------------------------------|
 | `/config`                     | `config.php` should go here                                                                                                   |
-| `/opt/observium/html`         | This allows you to add HTML plugins if you wish (such as weathermap!)                                                         |
-| `/opt/observium/logs`         | HTTP error/access, `observium.log` and `update-errors.log`                                                                    |
-| `/opt/observium/rrd`          | Mount this where you have a ample space and back up!                                                                          |
+| `/opt/librenms/html`         | This allows you to add HTML plugins if you wish (such as weathermap!)                                                         |
+| `/opt/librenms/logs`         | HTTP error/access, `librenms.log` and `update-errors.log`                                                                    |
+| `/opt/librenms/rrd`          | Mount this where you have a ample space and back up!                                                                          |
 | `/var/run/mysqld/mysqld.sock` | If you're running MySQL on the local Docker host, make use of this volume and set the SQL host to `localhost` in `config.php` |
 
 If you need to sub-in random, single files just add an extra `-v` argument to
@@ -107,12 +107,12 @@ Weathermap
 As in the list above, setting `USE_WEATHERMAP` will install network-weathermap
 under the htmldir if not there already and schedule map-poller.php in cron.
 
-To modify configuration, volume mount observium's htmldir to access weathermap.
+To modify configuration, volume mount librenms's htmldir to access weathermap.
 
 Maintenance
 -----------
 
-Observium has a tendancy to become huge over time with its eventlog containing
+librenms has a tendancy to become huge over time with its eventlog containing
 every port that flaps, syslog, performance timings for every run, and more.
 
 This image comes with a cronjob that will run daily for you to clean this up.
@@ -126,16 +126,16 @@ to configure your config.php for better control and what each switch does.
 Currently the stdout/stderr for the job isn't being sent to /dev/null so you
 should be able to see the status of your cleanups with `docker logs [id]`
 
-It is recommended by Observium to run the housekeeping script manually first
+It is recommended by librenms to run the housekeeping script manually first
 before relying on the crons since it may take awhile to first run. Do this if
 you are using existing data for this image.
 
-[initial post]: http://postman.memetic.org/pipermail/observium/2014-July/007264.html
+[initial post]: http://postman.memetic.org/pipermail/librenms/2014-July/007264.html
 
 Notes
 -----
 
 This image installs and runs rrdcached. To make use of it, make sure your
-observium configuration sets
+librenms configuration sets
 
     $config['rrdcached']    = "unix:/var/run/rrdcached.sock"

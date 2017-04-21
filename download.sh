@@ -1,45 +1,40 @@
 #!/bin/bash
-# == Fetch proper Observium version
+# Add librenms user
 
-community_http() {
-    cd /tmp &&
-    wget http://www.observium.org/observium-community-latest.tar.gz &&
-    tar xvf observium-community-latest.tar.gz &&
-    rm observium-community-latest.tar.gz
-}
+useradd librenms -d /opt/librenms -M -r
+usermod -a -G librenms www-data
 
-professional_svn() {
-    cd /tmp &&
-    svn co --non-interactive \
-           --username $SVN_USER \
-           --password $SVN_PASS \
-           $SVN_REPO observium
-}
+# == Fetch proper librenms version
 
-if [[ "$USE_SVN" == "true" && "$SVN_USER" && "$SVN_PASS" && "$SVN_REPO" ]]
-then
-    professional_svn
-else
-    community_http
-fi
-# I know this seems ridiculous, but since /opt/observium/html is an external
+cd /tmp &&
+
+wget https://github.com/librenms/librenms/archive/$librenms_RELEASE.tar.gz &&
+tar xvf $librenms_RELEASE.tar.gz &&
+mv librenms-$librenms_RELEASE librenms
+rm $librenms_RELEASE.tar.gz
+
+# I know this seems ridiculous, but since /opt/librenms/html is an external
 # volume mount, svn throws a fit about it conflicting with the tree. Pulling
-# SVN to temp directory and copying contents into /opt/observium was just the
+# SVN to temp directory and copying contents into /opt/librenms was just the
 # first way thought of to avoid dealing with the svn conflict resolution from
 # script.
-cp -r /tmp/observium/* /opt/observium/
+cp -r /tmp/librenms/* /opt/librenms/
 
-# configure observium package
-cd /opt/observium && \
-cp config.php.default config.php && \
-sed -i -e "s/= 'localhost';/= getenv('OBSERVIUM_DB_HOST');/g" config.php && \
-sed -i -e "s/= 'USERNAME';/= getenv('OBSERVIUM_DB_USER');/g" config.php && \
-sed -i -e "s/= 'PASSWORD';/= getenv('OBSERVIUM_DB_PASS');/g" config.php && \
-sed -i -e "s/= 'observium';/= getenv('OBSERVIUM_DB_NAME');/g" config.php
+# Web interface directories
 
-C='$config['\''rrdcached'\''] = "unix:/var/run/rrdcached.sock";'
-echo $C >> /opt/observium/config.php
+cd /opt/librenms
+mkdir rrd logs
+chmod 775 rrd
 
-chown nobody:users -R /opt/observium
-chmod 755 -R /opt/observium
+# setup logrotate
+
+cp /opt/librenms/misc/librenms.logrotate /etc/logrotate.d/librenms
+
+
+# configure librenms package
+
+
+
+
+
 
