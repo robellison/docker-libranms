@@ -15,7 +15,7 @@ VOLUME ["/config", \
         "/opt/librenms/html", \
         "/opt/librenms/logs", \
         "/opt/librenms/rrd", \
-        "/var/run/mysqld/mysqld.sock",
+        "/var/run/mysqld/mysqld.sock", \
         "/var/run"]
 
 # === General System
