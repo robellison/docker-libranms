@@ -96,9 +96,13 @@ RUN apt-get update -q && \
       whois \
       vim \
       rsyslog \
+      php7.0-fpm \
+      nginx-full \
       anacron \
       apache2 && \
-      apt-get purge -y python-software-properties software-properties-common && apt-get clean -y && apt-get autoclean -y && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+      apt-get purge -y python-software-properties software-properties-common && \
+      apt-get clean -y && apt-get autoclean -y && \
+      apt-get autoremove -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 
 RUN pip install --upgrade pip schedule
@@ -133,19 +137,19 @@ RUN chmod +x /etc/my_init.d/* && \
     chmod 755 -R /config
 
 # Configure apache2 to serve librenms app
-COPY ["conf/apache2.conf", "conf/ports.conf", "/etc/apache2/"]
-COPY conf/apache-librenms /etc/apache2/sites-available/000-default.conf
-COPY conf/rrdcached /etc/default/rrdcached
-RUN rm /etc/apache2/sites-available/default-ssl.conf && \
-    echo librenms > /etc/container_environment/APACHE_RUN_USER && \
-    echo librenms > /etc/container_environment/APACHE_RUN_GROUP && \
-    echo /var/log/apache2 > /etc/container_environment/APACHE_LOG_DIR && \
-    echo /var/lock/apache2 > /etc/container_environment/APACHE_LOCK_DIR && \
-    echo /var/run/apache2.pid > /etc/container_environment/APACHE_PID_FILE && \
-    echo /var/run/apache2 > /etc/container_environment/APACHE_RUN_DIR && \
-    chown -R librenms:librenms /var/log/apache2 && \
-    rm -Rf /var/www && \
-    ln -s /opt/librenms/html /var/www
+#COPY ["conf/apache2.conf", "conf/ports.conf", "/etc/apache2/"]
+#COPY conf/apache-librenms /etc/apache2/sites-available/000-default.conf
+#COPY conf/rrdcached /etc/default/rrdcached
+#RUN rm /etc/apache2/sites-available/default-ssl.conf && \
+#    echo librenms > /etc/container_environment/APACHE_RUN_USER && \
+#    echo librenms > /etc/container_environment/APACHE_RUN_GROUP && \
+#    echo /var/log/apache2 > /etc/container_environment/APACHE_LOG_DIR && \
+#    echo /var/lock/apache2 > /etc/container_environment/APACHE_LOCK_DIR && \
+#    echo /var/run/apache2.pid > /etc/container_environment/APACHE_PID_FILE && \
+#    echo /var/run/apache2 > /etc/container_environment/APACHE_RUN_DIR && \
+#    chown -R librenms:librenms /var/log/apache2 && \
+#    rm -Rf /var/www && \
+#    ln -s /opt/librenms/html /var/www
 
 # === Cron and finishing
 COPY cron.d /etc/cron.d/
@@ -157,9 +161,7 @@ RUN rm -Rf /etc/cron.monthly
 RUN rm -Rf /etc/cron.hourly
 RUN touch /etc/crontab /etc/cron.d/*
 
-# === phusion/baseimage post-work
-# Clean up APT when done
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# Download and install LibreNMS
 
 COPY download.sh /tmp/download.sh
 RUN chmod +x /tmp/download.sh
@@ -177,6 +179,18 @@ RUN chmod u+s /usr/bin/fping6
 # Add the logger script
 COPY logger.sh /bin/logger.sh
 RUN chmod +x /bin/logger.sh
+
+# PHP stuff
+RUN mkdir /run/php
+
+# Nginx Setup
+
+COPY nginx/librenms.conf /etc/nginx/conf.d/librenms.conf
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
+COPY nginx/www.conf /etc/php/7.0/fpm/pool.d/www.conf
+COPY nginx/php-fpm.conf /etc/php/7.0/fpm/php-fpm.conf
+RUN rm /etc/nginx/sites-enabled/default
+
 
 # configure container interfaces
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
