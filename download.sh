@@ -15,7 +15,6 @@ cp -r /tmp/librenms/* /opt/librenms/
 # Web interface directories
 
 cd /opt/librenms
-mkdir rrd logs
 chmod 775 rrd
 
 # setup logrotate

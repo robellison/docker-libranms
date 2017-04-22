@@ -88,12 +88,18 @@ RUN apt-get update -q && \
       rrdtool \
       snmp \
       sudo \
+      socat \
       software-properties-common \
       subversion \
       unzip \
       wget \
       whois \
-      apache2
+      vim \
+      rsyslog \
+      anacron \
+      apache2 && \
+      apt-get purge -y python-software-properties software-properties-common && apt-get clean -y && apt-get autoclean -y && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 
 RUN pip install --upgrade pip schedule
 
@@ -143,8 +149,12 @@ RUN rm /etc/apache2/sites-available/default-ssl.conf && \
 
 # === Cron and finishing
 COPY cron.d /etc/cron.d/
-RUN chmod g-w /etc/cron.d/librenms.nonroot.cron
+RUN chmod g-w /etc/cron.d/librenms
 RUN touch /var/log/cron.log
+RUN rm -Rf /etc/cron.daily
+RUN rm -Rf /etc/cron.weekly
+RUN rm -Rf /etc/cron.monthly
+RUN rm -Rf /etc/cron.hourly
 RUN touch /etc/crontab /etc/cron.d/*
 
 # === phusion/baseimage post-work
@@ -158,14 +168,15 @@ RUN sh /tmp/download.sh
 COPY startapp.sh /opt/startapp.sh
 RUN chmod +x /opt/startapp.sh
 
-COPY scheduler.py /opt/scheduler.py
-RUN chmod +x /opt/scheduler.py
-
 COPY config.php.default /tmp/config.php.default
 RUN mkdir -p /opt/librenms/lock
 
 RUN chmod u+s /usr/bin/fping
 RUN chmod u+s /usr/bin/fping6
+
+# Add the logger script
+COPY logger.sh /bin/logger.sh
+RUN chmod +x /bin/logger.sh
 
 # configure container interfaces
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf

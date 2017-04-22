@@ -56,10 +56,12 @@ a2enmod mpm_prefork
 a2enmod php7.0
 a2enmod rewrite
 
-echo "Validating setup..."
-cd /opt/librenms
-/opt/librenms/validate.php
+
 chown librenms:librenms -R /opt/librenms/html
-touch /etc/crontab /etc/cron.d/*
+touch /etc/crontab
+
+# Prepend environemt variables to the crontab
+env |cat - /etc/crontab > /tmp/crontab
+mv /tmp/crontab /etc/crontab
 
 
