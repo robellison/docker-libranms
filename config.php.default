@@ -53,3 +53,5 @@ $config['show_services'] = 1;
 # rrdcached
 $config['rrdcached'] = "unix:/var/run/rrdcached.sock";
 
+# network discovery
+$config['network_map_items'] = array('xdp');
