@@ -57,3 +57,6 @@ $config['rrdcached'] = "unix:/var/run/rrdcached.sock";
 $config['network_map_items'] = array('mac','xdp');
 $config['autodiscovery']['xdp'] = TRUE;
 
+# fix snmp names rather than IP
+$config['force_ip_to_sysname'] = true;
+
